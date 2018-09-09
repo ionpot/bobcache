@@ -1,0 +1,15 @@
+{
+	"target": {
+		"host": "bobs-epic-drone-shack-inc.herokuapp.com",
+		"port": 443,
+		"tls": true,
+		"routes": [
+			"/api/v0/drones",
+			"/api/v0/drone/\d+"
+		]
+	},
+	"port": 8080,
+	"expiration": {
+		"hours": 1
+	}
+}

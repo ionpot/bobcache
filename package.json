@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Caching proxy for Bob's Epic API",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --ui qunit test"
+    "test": "./node_modules/mocha/bin/mocha --ui qunit test/*.js"
   },
   "author": "Emir Kotan",
   "license": "ISC",

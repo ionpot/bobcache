@@ -91,9 +91,7 @@ exports.respondBodies = (bodies) =>
 	respondFn(() => Stream.respondBody(bodies.shift()));
 
 exports.respondList = (list) =>
-	respondFn(function () {
-		const [code, body] = list.shift();
-		return Stream.respondWith(code, body);
-	});
+	respondFn(() =>
+		List.applyTo(Stream.respondWith, list.shift()));
 
 exports.responseObject = Stream.responseObjectDumped;

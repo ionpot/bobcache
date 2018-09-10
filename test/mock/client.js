@@ -20,23 +20,20 @@ exports.expectResponseCode = (code, done) =>
 		done();
 	});
 
-const respondFn = (f) =>
+const respond = (f) =>
 	() => Promise.resolve(f());
 
-const respond = (x) =>
-	respondFn(Func.map(x));
-
 exports.respondCode = (code) =>
-	respond(Stream.respondCode(code));
+	respond(() => Stream.respondCode(code));
 
 exports.respondBody = (body) =>
-	respond(Stream.respondBody(body));
+	respond(() => Stream.respondBody(body));
 
 exports.respondBodies = (bodies) =>
-	respondFn(() => Stream.respondBody(bodies.shift()));
+	respond(() => Stream.respondBody(bodies.shift()));
 
 exports.respondList = (list) =>
-	respondFn(() =>
+	respond(() =>
 		List.applyTo(Stream.respondWith, list.shift()));
 
 exports.responseObject = Stream.responseDumped;

@@ -1,10 +1,17 @@
+const RegEx = require("utils/regexp.js");
+const Str = require("utils/str.js");
 const Fw = require("./forward.js");
 const useCache = require("./use-cache.js");
 const noCache = require("./no-cache.js");
 
+const matches = (routes, url) =>
+	routes
+		.map(RegEx.makeFull)
+		.some(RegEx.test(Str.noTrailingSlashes(url)));
+
 const canCache = (routes, req) =>
 	req.method === "GET"
-	&& routes.includes(req.url);
+	&& matches(routes, req.url);
 
 const handlerOf = (routes, req) =>
 	canCache(routes, req)

@@ -5,7 +5,7 @@
 		"tls": true,
 		"routes": [
 			"/api/v0/drones",
-			"/api/v0/drone/\d+"
+			"/api/v0/drone/\\d+"
 		]
 	},
 	"port": 8080,

@@ -8,14 +8,14 @@ const is2XX = (res) =>
 const ifOk = (yes, no) =>
 	cond(is2XX, yes, no);
 
-const checkIfOk =
+const rejectIfNotOk =
 	ifOk(Func.id, (res) => Promise.reject(res));
 
 exports.request = (req) =>
 	Client.forward(req);
 
 exports.requestOk = (req) =>
-	Client.get(req).then(checkIfOk);
+	Client.get(req).then(rejectIfNotOk);
 
 exports.requestUntilOk = (req) =>
 	new Promise(function self(done, fail) {

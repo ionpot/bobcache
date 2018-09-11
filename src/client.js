@@ -1,6 +1,6 @@
 const http = require("http");
 const https = require("https");
-const target = require("../config.js").target;
+const target = require("../config.json").target;
 
 const getClient = () =>
 	target.tls ? https : http;

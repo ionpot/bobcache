@@ -12,7 +12,7 @@ module.exports = function (req, cache) {
 	// only rejects in the case of a fatal network error
 	const fw = Fw.requestUntilOk(req)
 
-		// got response, issue a cache set, and don't wait for it
+		// got response, issue a cache set
 		.then(Func.side(Cache.set(req)));
 
 	// cache is most likely already resolved/rejected at this point

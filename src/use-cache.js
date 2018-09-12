@@ -9,7 +9,7 @@ const tryToRace = (req, cache) => (err) =>
 		: Promise.reject(err);
 
 module.exports = function (req, res) {
-	const cache = Cache.toResponse(req).catch(Func.empty);
+	const cache = Cache.get(req).catch(Func.empty);
 	return Fw.requestOk(req)
 		.catch(tryToRace(req, cache))
 		.then(Func.side(Cache.trySet(req)))

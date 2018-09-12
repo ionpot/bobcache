@@ -3,11 +3,10 @@ const Func = require("utils/func.js");
 const Cache = require("./cache.js");
 const Fw = require("./forward.js");
 
+const isCacheError = cond(Cache.isError);
+
 const waitCache = (cache) => (err) =>
 	cache.catch(() => Promise.reject(err));
-
-const isCacheError = (yes, no) =>
-	cond(Cache.isError, yes, no);
 
 module.exports = function (req, cache) {
 	// only rejects in the case of a fatal network error

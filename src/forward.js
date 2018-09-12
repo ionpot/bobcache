@@ -5,8 +5,7 @@ const Client = require("./client.js");
 const is2XX = (res) =>
 	Math.floor(res.statusCode / 100) === 2;
 
-const ifOk = (yes, no) =>
-	cond(is2XX, yes, no);
+const ifOk = cond(is2XX);
 
 const rejectIfNotOk =
 	ifOk(Func.id, (res) => Promise.reject(res));

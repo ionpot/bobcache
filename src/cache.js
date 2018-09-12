@@ -5,7 +5,7 @@ const Obj = require("utils/obj.js");
 const Stream = require("utils/stream.js");
 const Cache = require("./cache-map.js");
 
-const CACHED = Symbol("prevents storing the same thing");
+const CACHED = Symbol("prevents making unnecessary store calls");
 const NO_ENTRY = Symbol("error code for when fetch doesn't find an entry");
 
 const isCached = Obj.get(CACHED);

@@ -8,10 +8,8 @@ const tryToRace = (req, cache) => (err) =>
 		? race(req, cache)
 		: Promise.reject(err);
 
-module.exports = function (req, res) {
-	const cache = Cache.get(req).catch(Func.empty);
-	return Fw.requestOk(req)
+module.exports = (req, res) =>
+	Fw.requestOk(req)
 		.then(Func.side(Cache.set(req)))
-		.catch(tryToRace(req, cache))
+		.catch(tryToRace(req, Cache.get(req)))
 		.then(Fw.response(res));
-};

@@ -11,7 +11,7 @@ const tryToRace = (req, cache) => (err) =>
 module.exports = function (req, res) {
 	const cache = Cache.get(req).catch(Func.empty);
 	return Fw.requestOk(req)
+		.then(Func.side(Cache.set(req)))
 		.catch(tryToRace(req, cache))
-		.then(Func.side(Cache.trySet(req)))
 		.then(Fw.response(res));
 };

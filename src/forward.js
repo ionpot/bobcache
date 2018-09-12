@@ -1,5 +1,6 @@
 const cond = require("utils/cond.js");
 const Func = require("utils/func.js");
+const Prms = require("utils/promise.js");
 const Client = require("./client.js");
 
 const is2XX = (res) =>
@@ -8,7 +9,7 @@ const is2XX = (res) =>
 const ifOk = cond(is2XX);
 
 const rejectIfNotOk =
-	ifOk(Func.id, (res) => Promise.reject(res));
+	ifOk(Func.id, Prms.reject);
 
 exports.request = (req) =>
 	Client.forward(req);

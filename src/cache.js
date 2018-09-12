@@ -3,14 +3,10 @@ const Err = require("utils/error.js");
 const Func = require("utils/func.js");
 const Obj = require("utils/obj.js");
 const Stream = require("utils/stream.js");
+const Cache = require("./cache-map.js");
 
-const CACHED = Symbol();
-const NO_ENTRY = Symbol();
-
-const map = new Map();
-const fetch = (key) => map.get(key);
-const has = (key) => map.has(key);
-const store = (key, val) => void map.set(key, val);
+const CACHED = Symbol("prevents storing the same thing");
+const NO_ENTRY = Symbol("error code for when fetch doesn't find an entry");
 
 const isCached = Obj.get(CACHED);
 const setAsCached = Obj.set(CACHED, true);
@@ -26,20 +22,19 @@ const toEntry = (res) =>
 const toResponse = (val) =>
 	forward(val, Stream.readableWith(val.body));
 
-const noEntry = (key) =>
-	Err.make(NO_ENTRY, `No entry for "${key}"`);
+const noEntry = () =>
+	Err.make(NO_ENTRY);
 
 exports.get = (req) =>
-	new Promise(cond(has(keyOf(req))))
-		.then(fetch)
+	Cache.fetch(keyOf(req))
 		.then(toResponse)
 		.catch(noEntry);
 
-exports.isError = (err) =>
+exports.isNoEntry = (err) =>
 	err.code === NO_ENTRY;
 
 exports.set = (req) => (res) =>
-	store(keyOf(req), toEntry(res));
+	Cache.store(keyOf(req), toEntry(res));
 
 exports.trySet = (req) =>
-	cond(isCached)(Func.empty, exports.set);
+	cond(isCached)(Func.empty, exports.set(req));

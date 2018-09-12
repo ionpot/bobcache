@@ -3,7 +3,7 @@ const Func = require("utils/func.js");
 const Cache = require("./cache.js");
 const Fw = require("./forward.js");
 
-const isCacheError = cond(Cache.isError);
+const ifNoEntry = cond(Cache.isNoEntry);
 
 const waitCache = (cache) => (err) =>
 	cache.catch(() => Promise.reject(err));
@@ -21,5 +21,5 @@ module.exports = function (req, cache) {
 		// if cache fails, wait for fw
 		// if fw fails, wait for cache
 		// if cache also fails, return fw's error
-		.catch(isCacheError(Func.ret(fw), waitCache(cache)));
+		.catch(ifNoEntry(Func.ret(fw), waitCache(cache)));
 };

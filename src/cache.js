@@ -30,8 +30,7 @@ exports.get = (req) =>
 		.then(toResponse)
 		.catch(noEntry);
 
-exports.isNoEntry = (err) =>
-	err.code === NO_ENTRY;
+exports.isNoEntry = Err.is(NO_ENTRY);
 
 exports.set = (req) => (res) =>
 	Cache.store(keyOf(req), toEntry(res));

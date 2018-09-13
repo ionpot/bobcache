@@ -6,7 +6,7 @@ const noCache = require("./no-cache.js");
 
 const matches = (routes, url) =>
 	routes
-		.map(RegEx.makeFull)
+		.map(str => RegEx.makeFull(str))
 		.some(RegEx.test(Str.noTrailingSlashes(url)));
 
 const canCache = (routes, req) =>

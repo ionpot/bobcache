@@ -10,8 +10,8 @@ const keyOf = (req) => req.url;
 const forward =
 	Obj.forward(["headers", "statusCode"]);
 
-const toEntry = (res) =>
-	forward(res, {});
+const toEntry = (res) => (body) =>
+	forward(res, {body});
 
 const toResponse = (val) =>
 	forward(val, Stream.readableWith(val.body));
@@ -27,4 +27,6 @@ exports.get = (req) =>
 exports.isNoEntry = Err.is(NO_ENTRY);
 
 exports.set = (req) => (res) =>
-	Cache.store(keyOf(req), toEntry(res));
+	Stream.read(res)
+		.then(toEntry(res))
+		.then(Cache.store(keyOf(req)));

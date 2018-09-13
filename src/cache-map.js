@@ -8,4 +8,5 @@ const store = (key, val) => void map.set(key, val);
 exports.fetch = (key) =>
 	P.cond(has)(key).then(fetch);
 
-exports.store = store;
+exports.store = (key) => (val) =>
+	store(key, val);

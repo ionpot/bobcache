@@ -11,6 +11,12 @@ const ifOk = cond(is2XX);
 const rejectIfNotOk =
 	ifOk(Func.id, Prms.reject);
 
+const writeHead = (code, hdrs) => (res) =>
+	res.writeHead(code, hdrs), res;
+
+const writeHeadOf = (src) =>
+	writeHead(src.statusCode, src.headers);
+
 exports.request = (req) =>
 	Client.forward(req);
 
@@ -26,4 +32,9 @@ exports.requestUntilOk = (req) =>
 	});
 
 exports.response = (dest) => (res) =>
-	res.pipe(dest.writeHead(res.statusCode, res.headers));
+	res.pipe(writeHeadOf(res)(dest));
+
+exports.error = (dest) => (obj) =>
+	obj.statusCode
+		? exports.response(dest)(obj)
+		: writeHead(500)(dest).end(obj.toString());

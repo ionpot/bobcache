@@ -17,7 +17,7 @@ const toResponse = (val) =>
 	forward(val, Stream.readableWith(val.body));
 
 const noEntry = () =>
-	Err.make(NO_ENTRY);
+	Promise.reject(Err.make(NO_ENTRY));
 
 exports.get = (req) =>
 	Cache.fetch(keyOf(req))

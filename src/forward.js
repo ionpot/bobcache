@@ -12,7 +12,7 @@ const rejectIfNotOk =
 	ifOk(Func.id, Prms.reject);
 
 const writeHead = (code, hdrs) => (res) =>
-	res.writeHead(code, hdrs), res;
+	(res.writeHead(code, hdrs), res);
 
 const writeHeadOf = (src) =>
 	writeHead(src.statusCode, src.headers);

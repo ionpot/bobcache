@@ -7,12 +7,7 @@ exports.bodyString = () =>
 	"body string" + (++counter);
 
 exports.bodyStrings = (count) =>
-	List.createWith(exports.bodyString, count);
-
-exports.config = () => ({
-	target: { routes: ["/"] },
-	expiration: {}
-});
+	List.fillNew(exports.bodyString, count);
 
 exports.doNotCall = (name) =>
 	Func.throws(name + " should not be called");

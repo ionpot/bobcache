@@ -1,6 +1,6 @@
 const Obj = require("utils/obj.js");
 
-const Cache = require("../src/cache.js");
+const Cache = require("../src/cache-map.js");
 const Client = require("../src/client.js");
 const handle_ = require("../src/handle.js");
 
@@ -8,10 +8,10 @@ const Mock = require("./mock");
 const MockCache = require("./mock/cache.js");
 const MockClient = require("./mock/client.js");
 
-const config = Mock.config();
-const handle = handle_(config);
+const routes = ["/"];
+const handle = handle_(routes);
 
-const restore = Obj.saveList([Cache, Client, config.target]);
+const restore = Obj.saveList([Cache, Client]);
 
 suite("handle");
 
@@ -21,6 +21,8 @@ test("return the successful response", function (done) {
 	const req = MockClient.requestHome();
 	const body = Mock.bodyString();
 	const res = MockClient.expectResponse(body, done);
+	Cache.fetch = MockCache.noEntry();
+	Cache.store = MockCache.ignoreStore();
 	Client.get = MockClient.respondBody(body);
 	handle(req, res);
 });
@@ -29,8 +31,8 @@ test("cache a successful response", function (done) {
 	const req = MockClient.requestHome();
 	const body = Mock.bodyString();
 	const res = MockClient.responseObject();
-	Cache.get = MockCache.noEntry();
-	Cache.set = MockCache.expectEntry(body, done);
+	Cache.fetch = MockCache.noEntry();
+	Cache.store = MockCache.expectEntry(body, done);
 	Client.get = MockClient.respondBody(body);
 	handle(req, res);
 });
@@ -39,17 +41,17 @@ test("return from cache when request fails", function (done) {
 	const req = MockClient.requestHome();
 	const body = Mock.bodyString();
 	const res = MockClient.expectResponse(body, done);
-	Cache.get = MockCache.returnEntry(body);
-	Cache.set = MockCache.ignoreSet();
+	Cache.fetch = MockCache.returnEntry(body);
+	Cache.store = MockCache.ignoreStore();
 	Client.get = MockClient.respondCode(404);
 	handle(req, res);
 });
 
 test("update the cache with the newer response", function (done) {
 	const bodies = Mock.bodyStrings(2);
-	Cache.get = MockCache.noEntry();
-	Cache.set = MockCache.expectEntries(bodies, done);
-	Client.get = MockClient.respondBodies(bodies);
+	Cache.fetch = MockCache.noEntry();
+	Cache.store = MockCache.expectEntries(bodies, done);
+	Client.get = MockClient.respondBodies(bodies.slice());
 	bodies.forEach(function () {
 		const req = MockClient.requestHome();
 		const res = MockClient.responseObject();
@@ -61,8 +63,8 @@ test("successful response outruns cache", function (done) {
 	const req = MockClient.requestHome();
 	const body = Mock.bodyString();
 	const res = MockClient.expectResponse(body, done);
-	Cache.get = MockCache.noReturnEntry();
-	Cache.set = MockCache.ignoreSet();
+	Cache.fetch = MockCache.stall();
+	Cache.store = MockCache.ignoreStore();
 	Client.get = MockClient.respondList([[404, ""], [200, body]]);
 	handle(req, res);
 });
@@ -70,9 +72,9 @@ test("successful response outruns cache", function (done) {
 test("do not cache an unknown route", function (done) {
 	const req = MockClient.requestHome();
 	const res = MockClient.expectResponseCode(404, done);
-	Cache.get = Mock.doNotCall("cache get");
-	Cache.set = Mock.doNotCall("cache set");
-	Client.get = MockClient.respondCode(404);
-	config.target.routes = [];
-	handle(req, res);
+	Cache.fetch = Mock.doNotCall("Cache.fetch");
+	Cache.store = Mock.doNotCall("Cache.store");
+	Client.get = Mock.doNotCall("Client.get");
+	Client.forward = MockClient.respondCode(404);
+	handle_([])(req, res);
 });

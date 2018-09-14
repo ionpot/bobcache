@@ -1,6 +1,7 @@
 const assert = require("assert");
-const Func = require("utils/func.js");
+const ifDef = require("utils/ifdef.js");
 const List = require("utils/list.js");
+const Prms = require("utils/promise.js");
 const Stream = require("./stream.js");
 
 const equal = assert.strictEqual;
@@ -20,20 +21,15 @@ exports.expectResponseCode = (code, done) =>
 		done();
 	});
 
-const respond = (f) =>
-	() => Promise.resolve(f());
+const respond = (f) => (list) =>
+	() => ifDef(Prms.resolveWith(f), Prms.stall)(list.shift());
 
-exports.respondCode = (code) =>
-	respond(() => Stream.respondCode(code));
+const respondOnce = (f) => (x) =>
+	respond(f)([x]);
 
-exports.respondBody = (body) =>
-	respond(() => Stream.respondBody(body));
-
-exports.respondBodies = (bodies) =>
-	respond(() => Stream.respondBody(bodies.shift()));
-
-exports.respondList = (list) =>
-	respond(() =>
-		List.applyTo(Stream.respondWith, list.shift()));
+exports.respondCode = respondOnce(Stream.respondCode);
+exports.respondBody = respondOnce(Stream.respondBody);
+exports.respondBodies = respond(Stream.respondBody);
+exports.respondList = respond(List.applyTo(Stream.respondWith));
 
 exports.responseObject = Stream.responseDumped;

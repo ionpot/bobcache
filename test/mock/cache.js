@@ -2,41 +2,34 @@ const assert = require("assert");
 const Func = require("utils/func.js");
 const List = require("utils/list.js");
 
-const equal = assert.strictEqual;
+const equal = assert.deepStrictEqual;
 
-const cacheGet = (f) =>
-	() => f();
-
-const cacheGetPromise = (f) =>
-	cacheGet(() => new Promise(f));
+const toEntry = (body, code = 200, headers = {}) =>
+	({body, statusCode: code, headers});
 
 exports.noEntry = () =>
-	cacheGet(Promise.reject);
+	(key) => Promise.reject(key);
 
 exports.returnEntry = (body) =>
-	cacheGetPromise(Func.map(body));
+	() => Promise.resolve(toEntry(body));
 
-exports.noReturnEntry = () =>
-	cacheGetPromise(Func.empty);
+exports.stall = () =>
+	() => new Promise(Func.empty);
 
-const cacheSet = (f) =>
-	(conf, key, actual) =>
-		new Promise(function (done) {
-			f(actual);
-			done();
-		});
+const store = (f) =>
+	(key) => (actual) => void f(actual);
 
-exports.expectEntry = (value, done) =>
-	cacheSet(function (actual) {
-		equal(actual, value);
+exports.expectEntry = (body, done) =>
+	store(function (actual) {
+		equal(actual, toEntry(body));
 		done();
 	});
 
-exports.expectEntries = (values, done) =>
-	cacheSet(function (actual) {
-		equal(actual, values.shift());
-		List.ifEmpty(done, values);
+exports.expectEntries = (bodies, done) =>
+	store(function (actual) {
+		equal(actual, toEntry(bodies.shift()));
+		List.ifEmpty(done)(bodies);
 	});
 
-exports.ignoreSet = () =>
-	cacheSet(Func.empty);
+exports.ignoreStore = () =>
+	store(Func.empty);

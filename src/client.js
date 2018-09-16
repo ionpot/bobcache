@@ -11,7 +11,7 @@ const getOpts = (req) =>
 		port: target.port,
 		method: req.method,
 		path: req.url,
-		headers: {...req.headers, host: target.host}
+		headers: req.headers
 	});
 
 const makeReq = (req, done, fail) =>

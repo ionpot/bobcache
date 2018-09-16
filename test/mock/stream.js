@@ -1,5 +1,6 @@
 const Func = require("utils/func.js");
 const Stream = require("utils/stream.js");
+const Header = require("./header.js");
 
 function makeReq(method, path) {
 	const req = Stream.emptyReadable();
@@ -14,7 +15,7 @@ exports.createGET = (path) =>
 function makeResInbound(code, body) {
 	const res = Stream.readableWith(body);
 	res.statusCode = code;
-	res.headers = {};
+	res.headers = Header.text;
 	return res;
 }
 

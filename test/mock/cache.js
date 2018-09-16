@@ -1,10 +1,11 @@
 const assert = require("assert");
 const Func = require("utils/func.js");
 const List = require("utils/list.js");
+const Header = require("./header.js");
 
 const equal = assert.deepStrictEqual;
 
-const toEntry = (body, code = 200, headers = {}) =>
+const toEntry = (body, code = 200, headers = Header.text) =>
 	({body, statusCode: code, headers});
 
 exports.noEntry = () =>

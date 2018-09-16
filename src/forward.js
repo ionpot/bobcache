@@ -2,6 +2,7 @@ const cond = require("utils/cond.js");
 const Func = require("utils/func.js");
 const Prms = require("utils/promise.js");
 const Client = require("./client.js");
+const Hdrs = require("./headers.js");
 
 const is2XX = (res) =>
 	Math.floor(res.statusCode / 100) === 2;
@@ -37,4 +38,4 @@ exports.response = (dest) => (res) =>
 exports.error = (dest) => (obj) =>
 	obj.statusCode
 		? exports.response(dest)(obj)
-		: writeHead(500)(dest).end(obj.toString());
+		: writeHead(500, Hdrs.textPlain)(dest).end(obj.toString());

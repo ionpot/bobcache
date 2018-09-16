@@ -78,3 +78,13 @@ test("do not cache an unknown route", function (done) {
 	Client.forward = MockClient.respondCode(404);
 	handle_([])(req, res);
 });
+
+test("fail on a class 3 response", function (done) {
+	const code = 300;
+	const req = MockClient.requestHome();
+	const res = MockClient.expectResponseCode(code, done);
+	Cache.fetch = MockCache.noEntry();
+	Cache.store = Mock.doNotCall("Cache.store");
+	Client.get = MockClient.respondCode(code);
+	handle(req, res);
+});

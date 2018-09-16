@@ -8,9 +8,9 @@ const cacheFetch = (req) =>
 	Cache.get(req).catch(Func.id);
 
 const tryToRace = (req, cache) => (err) =>
-	err.statusCode
-		? race(req, cache)
-		: Promise.reject(err);
+	Hdrs.isFatal(err)
+		? Promise.reject(err)
+		: race(req, cache);
 
 // cacheFetch doesn't have to wait for Fw.requestOk to fail
 // they run in parallel to save time

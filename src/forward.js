@@ -4,13 +4,14 @@ const Prms = require("utils/promise.js");
 const Client = require("./client.js");
 const Hdrs = require("./headers.js");
 
-const is2XX = (res) =>
-	Math.floor(res.statusCode / 100) === 2;
-
-const ifOk = cond(is2XX);
+const ifOk = cond(Hdrs.isOk);
+const if3XX = cond(Hdrs.isClass(3));
 
 const rejectIfNotOk =
 	ifOk(Func.id, Prms.reject);
+
+const rejectIf3XX =
+	if3XX(Prms.reject, Func.id);
 
 const writeHead = (code, hdrs) => (res) =>
 	(res.writeHead(code, hdrs), res);
@@ -22,12 +23,13 @@ exports.request = (req) =>
 	Client.forward(req);
 
 exports.requestOk = (req) =>
-	Client.get(req).then(rejectIfNotOk);
+	Client.get(req).then(rejectIf3XX).then(rejectIfNotOk);
 
 exports.requestUntilOk = (req) =>
 	new Promise(function self(done, fail) {
 		const retry = () => self(done, fail);
 		Client.get(req)
+			.then(rejectIf3XX)
 			.then(ifOk(done, retry))
 			.catch(fail);
 	});

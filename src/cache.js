@@ -1,8 +1,11 @@
 const Err = require("utils/error.js");
 const Obj = require("utils/obj.js");
 const Stream = require("utils/stream.js");
+const Time = require("utils/time.js");
+const Config = require("../config.json");
 const Cache = require("./cache-map.js");
 
+const duration = Time.toMilliseconds(Config.expiration || {});
 const NO_ENTRY = Symbol("error code for when fetch doesn't find an entry");
 
 const keyOf = (req) => req.url;
@@ -29,4 +32,4 @@ exports.isNoEntry = Err.is(NO_ENTRY);
 exports.set = (req) => (res) =>
 	Stream.read(res)
 		.then(toEntry(res))
-		.then(Cache.store(keyOf(req)));
+		.then(Cache.store(keyOf(req), duration));

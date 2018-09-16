@@ -1,5 +1,5 @@
 const assert = require("assert");
-const ifDef = require("utils/ifdef.js");
+const If = require("utils/if.js");
 const List = require("utils/list.js");
 const Prms = require("utils/promise.js");
 const Stream = require("./stream.js");
@@ -22,7 +22,7 @@ exports.expectResponseCode = (code, done) =>
 	});
 
 const respond = (f) => (list) =>
-	() => ifDef(Prms.resolveWith(f), Prms.stall)(list.shift());
+	() => If.def(Prms.resolveWith(f), Prms.stall)(list.shift());
 
 const respondOnce = (f) => (x) =>
 	respond(f)([x]);

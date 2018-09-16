@@ -33,3 +33,5 @@ exports.set = (req) => (res) =>
 	Stream.read(res)
 		.then(toEntry(res))
 		.then(Cache.store(keyOf(req), duration));
+
+exports.clear = Cache.clear;

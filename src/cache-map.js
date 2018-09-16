@@ -8,6 +8,7 @@ const fetch = (key) => map.get(key);
 const has = (key) => map.has(key);
 const store = (key, val) => map.set(key, val);
 const remove = (key) => map.delete(key);
+const clear = () => map.clear();
 
 const timers = new Map();
 const onExpire = (key) => function () {
@@ -32,3 +33,5 @@ exports.store = (key, duration) => function (val) {
 	If.positive(schedule(key), rmvTimer(key))(duration);
 	store(key, val);
 };
+
+exports.clear = clear;

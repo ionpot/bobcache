@@ -38,10 +38,10 @@ $ npm test
 ## Configuration
 The _config.json_ file contains the default configuration the proxy uses. The fields are:
 - __target__ _object_: Information on how to connect to target server, and which routes to cache.
--- __host__ _string_: The domain name, or the IP address of the target server, without the protocol bit (_http://_).
--- __port__ _number_: Port number the target server is listening on.
--- __tls__ _bool_: Which HTTP client to be used when making a request to this server. `true` uses HTTPS, `false` uses HTTP.
--- __routes__ _regexp strings_: An array of patterns. If a GET url matches this pattern, it will be cached. The proxy adds _^_ and _$_ characters to these patterns, so they are matched from start to end.
+  - __host__ _string_: The domain name, or the IP address of the target server, without the protocol bit (_http://_).
+  - __port__ _number_: Port number the target server is listening on.
+  - __tls__ _bool_: Which HTTP client to be used when making a request to this server. `true` uses HTTPS, `false` uses HTTP.
+  - __routes__ _regexp strings_: An array of patterns. If a GET url matches this pattern, it will be cached. The proxy adds _^_ and _$_ characters to these patterns, so they are matched from start to end.
 - __port__ _number_: Port number the proxy is going to listen on.
 - __expiration__ _object_: Dictates how long a cache entry should last. This object is passed straight to `utils/time.js` to be crunched into a millisecond value. Accepted fields are (all _number_): _milliseconds_, _seconds_, _minutes_, _hours_, _days_, _months_, _years_
 
